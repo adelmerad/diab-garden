@@ -14,7 +14,20 @@
 **Gamified health-tracking mobile app for people with diabetes** — healthy habits grow a personal garden.
 Built at the **PEXILIS Hackathon** (Open Mind Club, February 2026).
 
-**🌐 Live demo: [diab-garden-frontend.vercel.app](https://diab-garden-frontend.vercel.app)** — web version, best viewed in mobile view. Sign up with any details: accounts are simulated and data stays in your browser.
+**🌐 Live demo: [diab-garden-frontend.vercel.app](https://diab-garden-frontend.vercel.app)** — web version, best viewed in mobile view.
+
+### 🔑 Demo account
+
+Accounts are simulated: no data leaves your browser, so you can [sign up](https://diab-garden-frontend.vercel.app/signup) with any details, for example:
+
+| Field | Value |
+|-------|-------|
+| Full name | `Demo User` |
+| Email | `demo@diab.dz` |
+| Password | `Diabetes2026` (8+ characters with upper case, lower case and a number) |
+| Age · Gender | `30` · any |
+
+Your records, tasks and garden are saved in the browser (`localStorage`) and survive a reload.
 
 ## 🧩 The Problem
 
