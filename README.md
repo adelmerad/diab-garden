@@ -100,6 +100,17 @@ npx expo start
 
 Scan the QR code with Expo Go to run the app.
 
+### Web version
+
+The same code runs in the browser through `react-native-web`:
+
+```bash
+npx expo start --web              # development
+npx expo export --platform web    # static build in frontend/dist (deployed on Vercel)
+```
+
+Data is stored locally (AsyncStorage, i.e. `localStorage` on the web) and authentication is mocked, so the web demo works without a backend.
+
 ## 🎬 Demo & Pitch
 
 - [Demo video](docs/demo.mp4)
