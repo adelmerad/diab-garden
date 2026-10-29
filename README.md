@@ -14,6 +14,8 @@
 **Gamified health-tracking mobile app for people with diabetes** — healthy habits grow a personal garden.
 Built at the **PEXILIS Hackathon** (Open Mind Club, February 2026).
 
+**🌐 Live demo: [diab-garden-frontend.vercel.app](https://diab-garden-frontend.vercel.app)** — web version, best viewed in mobile view. Sign up with any details: accounts are simulated and data stays in your browser.
+
 ## 🧩 The Problem
 
 Living with diabetes means tracking glucose, diet, water, exercise, sleep and many medical appointments every day. The main obstacle is **motivation**: without a central place to follow their progress, patients lose track, reset to zero and fall into a negative feedback loop.
