@@ -3,12 +3,18 @@ import { useAuthStore } from "@/lib/auth-store";
 import { useTaskStore } from "@/lib/daily-tasks";
 import { Stack } from "expo-router";
 import { useEffect } from "react";
+import { AppState } from "react-native";
 
 export default function RootLayout() {
   const { checkForDayReset, currentDate, completedToday } = useTaskStore();
 
   useEffect(() => {
     checkForDayReset();
+    // The app can stay open in the background past midnight: check again when it comes back
+    const subscription = AppState.addEventListener("change", (state) => {
+      if (state === "active") checkForDayReset();
+    });
+    return () => subscription.remove();
   }, []);
 
   return (
