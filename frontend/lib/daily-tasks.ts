@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { dayKey } from "./dates";
 
 export type Task = {
   id: string;
@@ -33,7 +34,7 @@ const defaultTasks: Task[] = [
   { id: "3", title: "10-minute walk", completed: false },
 ];
 
-const todayString = () => new Date().toISOString().split("T")[0];
+const todayString = () => dayKey();
 
 export const useTaskStore = create<TaskStore>()(
   persist(

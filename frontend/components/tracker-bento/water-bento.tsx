@@ -4,6 +4,7 @@ import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { useRecordingStore } from "@/lib/records";
 import { usePersonalGoalStore } from "@/lib/use-personal-goals";
+import { dayKey, dayKeyOf } from "@/lib/dates";
 
 const style = StyleSheet.create({
   container: {
@@ -50,8 +51,7 @@ function WaterBento() {
     const records = recordings.recordings
       .filter(
         (r) =>
-          r.type === "Water" &&
-          r.date.split("T")[0] === today.toISOString().split("T")[0],
+          r.type === "Water" && dayKeyOf(r.date) === dayKey(today),
       )
       .reduce((acc, r) => {
         if (r.type !== "Water") return acc;

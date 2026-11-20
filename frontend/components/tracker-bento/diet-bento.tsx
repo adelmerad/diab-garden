@@ -3,6 +3,7 @@ import { useRecordingStore } from "@/lib/records";
 import { usePersonalGoalStore } from "@/lib/use-personal-goals";
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import { StyleSheet, View, Text } from "react-native";
+import { dayKey, dayKeyOf } from "@/lib/dates";
 
 const style = StyleSheet.create({
   container: {
@@ -54,8 +55,7 @@ function DietBento() {
     const records = recordings.recordings
       .filter(
         (r) =>
-          r.type === "Diet" &&
-          r.date.split("T")[0] === today.toISOString().split("T")[0],
+          r.type === "Diet" && dayKeyOf(r.date) === dayKey(today),
       )
       .reduce(
         (acc, r) => {

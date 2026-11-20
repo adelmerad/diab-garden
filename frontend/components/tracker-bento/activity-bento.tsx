@@ -4,6 +4,7 @@ import { useRecordingStore } from "@/lib/records";
 import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
 import { useEffect } from "react";
 import { StyleSheet, View, Text } from "react-native";
+import { dayKey, dayKeyOf } from "@/lib/dates";
 
 const style = StyleSheet.create({
   container: {
@@ -39,8 +40,7 @@ function ActivityBento() {
     const records = recordings.recordings
       .filter(
         (r) =>
-          r.type === "Activity" &&
-          r.date.split("T")[0] === today.toISOString().split("T")[0],
+          r.type === "Activity" && dayKeyOf(r.date) === dayKey(today),
       )
       .reduce((acc, r) => {
         if (r.type !== "Activity") return acc;
