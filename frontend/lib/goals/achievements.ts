@@ -1,41 +1,25 @@
 import { Achievement, AchievementType, Goal, UserAPI } from "@/config/types";
 import { GoalEvaluator, GoalContext } from "./goals";
+import { dayKey, dayKeyOf, daysBefore } from "../dates";
 
 const achievementEvaluators: Record<AchievementType, GoalEvaluator> = {
   GLUCOSE_REBALANCE: (achievement, { api }) => {
-    const glucoseRecordings = api.getRecordings("Glucose", 1);
+    // 2 days back so the whole of yesterday is included
+    const fastingGlucose = api
+      .getRecordings("Glucose", 2)
+      .filter((r) => r.type === "Glucose" && r.when === "Fasting");
 
-    const yesterday = new Date();
-    yesterday.setDate(yesterday.getDate() - 1);
+    // Compare calendar days as strings: two Date objects are never === to each other
+    const yesterday = daysBefore(1);
+    const today = dayKey();
+    const inRange = (value: number) => value >= 80 && value <= 130;
 
-    const yesterdaysRecordings = glucoseRecordings.filter(
-      (r) =>
-        new Date(r.date) === yesterday &&
-        r.type === "Glucose" &&
-        r.when === "Fasting",
+    const unbalancedYesterday = fastingGlucose.some(
+      (r) => r.type === "Glucose" && dayKeyOf(r.date) === yesterday && !inRange(r.value),
     );
-
-    let unbalancedYesterday = false;
-    yesterdaysRecordings.forEach((r) => {
-      if (r.type !== "Glucose") return;
-
-      if (r.value < 80 || r.value > 130) unbalancedYesterday = true;
-    });
-
-    const today = new Date();
-    const todaysRecordings = glucoseRecordings.filter(
-      (r) =>
-        new Date(r.date) === today &&
-        r.type === "Glucose" &&
-        r.when === "Fasting",
+    const balancedToday = fastingGlucose.some(
+      (r) => r.type === "Glucose" && dayKeyOf(r.date) === today && inRange(r.value),
     );
-
-    let balancedToday = false;
-    todaysRecordings.forEach((r) => {
-      if (r.type !== "Glucose") return;
-
-      if (r.value >= 80 && r.value <= 130) balancedToday = true;
-    });
 
     const completed = unbalancedYesterday && balancedToday;
     return {
