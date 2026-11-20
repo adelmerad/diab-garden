@@ -9,12 +9,8 @@ import {
 import { getSleepTime } from "./stats-function";
 import { useAchievements } from "./use-achievements";
 import { usePersonalGoalStore } from "./use-personal-goals";
+import { dayKey, dayKeyOf } from "./dates";
 
-const todayString = () => new Date().toISOString().split("T")[0];
-
-const isSameDay = (a: string, b: string) =>
-  new Date(a).toISOString().split("T")[0] ===
-  new Date(b).toISOString().split("T")[0];
 
 const daysAgo = (days: number) => {
   const d = new Date();
@@ -23,7 +19,10 @@ const daysAgo = (days: number) => {
 };
 
 class LocalUserAPI implements UserAPI {
-  private personalGoals: PersonalGoal = usePersonalGoalStore.getState().goals;
+  // Read the store each time: a copy taken at startup would ignore goals changed later
+  private get personalGoals(): PersonalGoal {
+    return usePersonalGoalStore.getState().goals;
+  }
 
   getRecordings(type: TrackedMetrics, days: number): Recording[] {
     const { recordings } = useRecordingStore.getState();
@@ -51,10 +50,12 @@ class LocalUserAPI implements UserAPI {
     const { history } = useTaskStore.getState();
 
     let streak = 0;
-    let cursor = new Date();
+    const cursor = new Date();
+    // Today is not over yet: if it is not done, count from yesterday
+    if (!history.includes(dayKey(cursor))) cursor.setDate(cursor.getDate() - 1);
 
     while (true) {
-      const dateStr = cursor.toISOString().split("T")[0];
+      const dateStr = dayKey(cursor);
 
       if (history.includes(dateStr)) {
         streak++;
@@ -77,15 +78,20 @@ class LocalUserAPI implements UserAPI {
     const { recordings } = useRecordingStore.getState();
     const goals = this.personalGoals;
 
+    const recordingsOn = (day: string) =>
+      recordings.filter((r) => r.type === type && dayKeyOf(r.date) === day);
+
     let streak = 0;
-    let cursor = new Date();
+    const cursor = new Date();
+    // Today is not over yet: if its goal is not met, count from yesterday
+    if (!this.meetsGoalForDay(type, recordingsOn(dayKey(cursor)), goals)) {
+      cursor.setDate(cursor.getDate() - 1);
+    }
 
     while (true) {
-      const dayStr = cursor.toISOString().split("T")[0];
+      const dayStr = dayKey(cursor);
 
-      const dayRecordings = recordings.filter(
-        (r) => r.type === type && isSameDay(r.date, dayStr),
-      );
+      const dayRecordings = recordingsOn(dayStr);
 
       if (!this.meetsGoalForDay(type, dayRecordings, goals)) {
         break;
